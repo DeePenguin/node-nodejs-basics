@@ -1,4 +1,4 @@
-import { createReadStream } from 'node:fs';
+import { readFile } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { pipeline } from 'node:stream/promises';
@@ -10,8 +10,8 @@ const errorMessage = 'FS operation failed';
 
 const read = async () => {
   try {
-    const stream = createReadStream(pathToFile);
-    await pipeline(stream, stdout);
+    const content = await readFile(pathToFile, { encoding: 'utf-8' });
+    await pipeline(content.concat('\n'), stdout);
   } catch (err) {
     throw new Error(errorMessage);
   }

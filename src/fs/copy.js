@@ -1,8 +1,6 @@
-import { mkdir, readdir } from 'node:fs/promises';
-import { createReadStream, createWriteStream } from 'node:fs';
+import { mkdir, readdir, copyFile } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { pipeline } from 'node:stream/promises';
 import { doesExist } from '../utils/doesExist.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -19,9 +17,9 @@ const copy = async () => {
 
     const sourceContent = await readdir(sourcePath, { withFileTypes: true });
     sourceContent.forEach(async (item) => {
-      await pipeline(
-        createReadStream(join(sourcePath, item.name)),
-        createWriteStream(join(destinationPath, item.name))
+      await copyFile(
+        join(sourcePath, item.name),
+        join(destinationPath, item.name)
       );
     });
   } catch (error) {
