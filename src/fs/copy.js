@@ -8,20 +8,27 @@ const sourcePath = join(__dirname, 'files');
 const destinationPath = join(__dirname, 'files-copy');
 const errorMessage = 'FS operation failed';
 
+const copyDir = async (source, destination) => {
+  if (!(await doesExist(source))) {
+    throw new Error();
+  }
+  await mkdir(destination);
+
+  const sourceContent = await readdir(source, { withFileTypes: true });
+  sourceContent.forEach(async (item) => {
+    if (item.isDirectory()) {
+      return await copyDir(
+        join(source, item.name),
+        join(destination, item.name)
+      );
+    }
+    await copyFile(join(source, item.name), join(destination, item.name));
+  });
+};
+
 const copy = async () => {
   try {
-    if (!(await doesExist(sourcePath))) {
-      throw new Error();
-    }
-    await mkdir(destinationPath);
-
-    const sourceContent = await readdir(sourcePath, { withFileTypes: true });
-    sourceContent.forEach(async (item) => {
-      await copyFile(
-        join(sourcePath, item.name),
-        join(destinationPath, item.name)
-      );
-    });
+    await copyDir(sourcePath, destinationPath);
   } catch (error) {
     throw new Error(errorMessage);
   }
