@@ -1,6 +1,7 @@
 import { writeFile } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { CustomError } from '../utils/error.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -12,7 +13,7 @@ const create = async () => {
   try {
     await writeFile(pathToFile, fileContent, { flag: 'wx' });
   } catch (error) {
-    throw new Error(errorMessage);
+    throw new CustomError(errorMessage, error);
   }
 };
 

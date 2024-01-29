@@ -3,17 +3,18 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { pipeline } from 'node:stream/promises';
 import { stdout } from 'node:process';
+import { CustomError } from '../utils/error.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const pathToFile = join(__dirname, 'files', 'fileToRead.txt');
-const errorMessage = 'Something went wrong while reading the file';
+const errorMessage = 'Can\'t read the file';
 
 const read = async () => {
   try {
     const stream = createReadStream(pathToFile);
     await pipeline(stream, stdout);
-  } catch (err) {
-    throw new Error(errorMessage);
+  } catch (error) {
+    throw new CustomError(errorMessage, error);
   }
 };
 

@@ -2,6 +2,7 @@ import { mkdir, readdir, copyFile } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { doesExist } from '../utils/doesExist.js';
+import { CustomError } from '../utils/error.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const sourcePath = join(__dirname, 'files');
@@ -10,7 +11,7 @@ const errorMessage = 'FS operation failed';
 
 const copyDir = async (source, destination) => {
   if (!(await doesExist(source))) {
-    throw new Error();
+    throw new Error('Source directory does not exist');
   }
   await mkdir(destination);
 
@@ -30,7 +31,7 @@ const copy = async () => {
   try {
     await copyDir(sourcePath, destinationPath);
   } catch (error) {
-    throw new Error(errorMessage);
+    throw new CustomError(errorMessage, error);
   }
 };
 
